@@ -9,10 +9,18 @@ if ! grep -q "ubuntu-xenial" /etc/hosts; then
     echo "127.0.0.1 ubuntu-xenial" >> /etc/hosts
 fi
 
+# Pre-set config selections
+debconf-set-selections <<< 'mysql-server mysql-server/root_password password vagrant'
+debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password vagrant'
+mysql -u root -pvagrant -e "CREATE DATABASE vagrant"
+
 # Install dependencies
 add-apt-repository ppa:ondrej/php
 apt-get update
 apt-get install -y apache2 git curl php7.0 php7.0-bcmath php7.0-bz2 php7.0-cli php7.0-curl php7.0-intl php7.0-json php7.0-mbstring php7.0-opcache php7.0-soap php7.0-sqlite3 php7.0-xml php7.0-xsl php7.0-zip libapache2-mod-php7.0
+apt-get install -y php7.0-mysql
+apt-get install -y mysql-server
+
 
 # Configure Apache
 echo "<VirtualHost *:80>
